@@ -14,7 +14,7 @@ fi
 
 PORT=8080 java -Xms48m -Xmx300m -XX:+UseSerialGC -Djava.awt.headless=true -jar /app/app.jar &
 api_pid=$!
-nginx -g 'daemon off;' &
+nginx -e /dev/stderr -g 'daemon off;' &
 nginx_pid=$!
 
 while kill -0 "${api_pid}" 2>/dev/null && kill -0 "${nginx_pid}" 2>/dev/null; do

@@ -37,7 +37,9 @@ public class Recognition {
               .maxAttempts(2)
               .waitDuration(Duration.ofMillis(300))
               .retryOnException(
-                  e -> e instanceof java.io.IOException || e instanceof TransientFailure)
+                  e ->
+                      (e instanceof java.io.IOException && !(e instanceof HttpTimeoutException))
+                          || e instanceof TransientFailure)
               .build());
 
   static class TransientFailure extends RuntimeException {}
@@ -53,7 +55,8 @@ public class Recognition {
       Object body,
       Map<String, String> headers,
       CircuitBreaker breaker,
-      Instant deadline)
+      Instant deadline,
+      Duration requestTimeout)
       throws Exception {
     return breaker.executeCallable(
         () ->
@@ -64,7 +67,9 @@ public class Recognition {
                     throw new IllegalStateException("Recognition time budget exhausted");
                   var req =
                       HttpRequest.newBuilder(URI.create(uri))
-                          .timeout(Duration.ofMillis(Math.min(12000, remaining)))
+                          .timeout(
+                              Duration.ofMillis(
+                                  Math.min(requestTimeout.toMillis(), remaining)))
                           .header("Content-Type", "application/json");
                   headers.forEach(req::header);
                   var response =
@@ -162,9 +167,9 @@ public class Recognition {
                   "responseJsonSchema",
                   schema,
                   "maxOutputTokens",
-                  2200,
-                  "temperature",
-                  0.1));
+                  800,
+                  "thinkingConfig",
+                  Map.of("thinkingLevel", "MINIMAL")));
       String model = config.get("GEMINI_MODEL", "gemini-3.5-flash-lite");
       uri =
           "https://generativelanguage.googleapis.com/v1beta/models/"
@@ -172,7 +177,14 @@ public class Recognition {
               + ":generateContent";
       headers = Map.of("x-goog-api-key", config.required("GEMINI_API_KEY"));
     }
-    var response = request(uri, body, headers, vision, deadline);
+    var response =
+        request(
+            uri,
+            body,
+            headers,
+            vision,
+            deadline,
+            stub ? Duration.ofSeconds(12) : Duration.ofSeconds(35));
     String output = recognitionOutput(response, stub);
     var items = json.readTree(output).path("items");
     if (!items.isArray() || items.size() > 6)
@@ -247,7 +259,8 @@ public class Recognition {
             Map.of("query", name, "dataType", List.of("Foundation", "SR Legacy"), "pageSize", 3),
             Map.of(),
             nutrition,
-            deadline);
+            deadline,
+            Duration.ofSeconds(12));
     List<Nutrition> result = new ArrayList<>();
     for (var food : response.path("foods")) {
       Map<Integer, BigDecimal> values = new HashMap<>();
