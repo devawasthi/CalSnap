@@ -50,7 +50,7 @@ class RecognitionFlowTest {
           }
           String data =
               exchange.getRequestURI().getPath().equals("/responses")
-                  ? "{\"status\":\"completed\",\"output\":[{\"content\":[{\"type\":\"output_text\",\"text\":\"{\\\"items\\\":[{\\\"foodName\\\":\\\"banana\\\",\\\"portionG\\\":120,\\\"confidence\\\":0.6}]}\"}]}]}"
+                  ? "{\"status\":\"completed\",\"output\":[{\"content\":[{\"type\":\"output_text\",\"text\":\"{\\\"items\\\":[{\\\"foodName\\\":\\\"banana\\\",\\\"portionG\\\":120,\\\"confidence\\\":0.6,\\\"calories\\\":107,\\\"proteinG\\\":1.3,\\\"carbsG\\\":27.4,\\\"fatG\\\":0.4}]}\"}]}]}"
                   : "{\"foods\":[{\"fdcId\":1,\"description\":\"Banana\",\"foodNutrients\":[{\"nutrientId\":1008,\"value\":89},{\"nutrientId\":1003,\"value\":1.09},{\"nutrientId\":1004,\"value\":0.33},{\"nutrientId\":1005,\"value\":22.84}]}]}";
           if (exchange.getRequestURI().getPath().equals("/foods/search")) lookups.incrementAndGet();
           byte[] bytes = data.getBytes(java.nio.charset.StandardCharsets.UTF_8);
@@ -120,6 +120,7 @@ class RecognitionFlowTest {
     assertTrue(((List<?>) food.summary(user, null).get("entries")).isEmpty());
     var items = (List<?>) scan.get("items");
     Candidate candidate = (Candidate) items.getFirst();
+    assertEquals(new java.math.BigDecimal("107"), candidate.estimatedMacros().calories());
     var item =
         new Selection(
             candidate.foodName(),

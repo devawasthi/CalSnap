@@ -39,7 +39,11 @@ public final class Models {
   }
 
   public record Candidate(
-      String foodName, BigDecimal portionG, double confidence, List<Nutrition> candidates) {}
+      String foodName,
+      BigDecimal portionG,
+      double confidence,
+      List<Nutrition> candidates,
+      Macros estimatedMacros) {}
 
   public record Nutrition(String fdcId, String description, Macros per100g) {}
 

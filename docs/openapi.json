@@ -1554,6 +1554,10 @@
             "items": {
               "$ref": "#/components/schemas/Nutrition"
             }
+          },
+          "estimatedMacros": {
+            "$ref": "#/components/schemas/Macros",
+            "description": "AI-estimated totals for the photographed portion; used when no USDA match is available."
           }
         }
       },

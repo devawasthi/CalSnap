@@ -27,6 +27,7 @@ import {
   setCsrf,
   scale,
   normalizeScan,
+  nutritionForCandidate,
   dayInZone,
   type Entry,
   type Goal,
@@ -290,9 +291,7 @@ function App() {
         ? result.items.map((item) => ({
             foodName: item.foodName,
             portionG: item.portionG,
-            macros: item.candidates.length
-              ? scale(item.candidates[0].per100g, item.portionG / 100)
-              : { ...empty.macros },
+            macros: nutritionForCandidate(item),
           }))
         : [structuredClone(empty)];
       setSelections(items);
@@ -879,6 +878,11 @@ function App() {
                         ))}
                       </select>
                     </label>
+                  ) : scan.items[i]?.estimatedMacros ? (
+                    <p className="hint">
+                      AI-estimated nutrition for the photographed portion.
+                      Review the values before saving.
+                    </p>
                   ) : (
                     <p className="hint">
                       No verified nutrition match. Enter macros from a label or

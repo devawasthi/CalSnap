@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { scale, dayInZone, normalizeScan, type Scan } from "./api";
+import {
+  scale,
+  dayInZone,
+  normalizeScan,
+  nutritionForCandidate,
+  type Scan,
+} from "./api";
 describe("nutrition and calendar calculations", () => {
   it("scales all four macros for a changed portion", () => {
     expect(
@@ -40,5 +46,21 @@ describe("nutrition and calendar calculations", () => {
       confidence: 0.84,
       candidates: [],
     });
+  });
+  it("uses the AI nutrition estimate when USDA has no match", () => {
+    expect(
+      nutritionForCandidate({
+        foodName: "mixed vegetables cooked",
+        portionG: 120,
+        confidence: 0.8,
+        candidates: [],
+        estimatedMacros: {
+          calories: 145,
+          protein: 4.2,
+          carbs: 19,
+          fat: 6.5,
+        },
+      }),
+    ).toEqual({ calories: 145, protein: 4.2, carbs: 19, fat: 6.5 });
   });
 });

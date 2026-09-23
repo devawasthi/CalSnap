@@ -35,6 +35,7 @@ export type Candidate = {
   portionG: number;
   confidence: number;
   candidates: Nutrition[];
+  estimatedMacros?: Macros;
 };
 export type Scan = {
   id: string;
@@ -53,6 +54,12 @@ export function normalizeScan(scan: Scan): Scan {
         }))
       : [],
   };
+}
+export function nutritionForCandidate(candidate: Candidate): Macros {
+  const verified = candidate.candidates[0];
+  if (verified) return scale(verified.per100g, candidate.portionG / 100);
+  if (candidate.estimatedMacros) return { ...candidate.estimatedMacros };
+  return { calories: 0, protein: 0, carbs: 0, fat: 0 };
 }
 export type Selection = { foodName: string; portionG: number; macros: Macros };
 export type Session = {
