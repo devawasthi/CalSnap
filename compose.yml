@@ -1,0 +1,50 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: calsnap
+      POSTGRES_USER: calsnap
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-calsnap-local-only}
+    ports: ["127.0.0.1:5438:5432"]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U calsnap"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  stub:
+    image: python:3.12-alpine
+    command: ["python", "/stub/server.py"]
+    volumes: ["./scripts/stub.py:/stub/server.py:ro"]
+    ports: ["127.0.0.1:8090:8090"]
+  api:
+    build: ./backend
+    environment:
+      APP_ENV: local
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:-http://localhost:5173}
+      JWT_SECRET: ${JWT_SECRET:-local-development-only-change-before-deploy-9284}
+      DATABASE_URL: jdbc:postgresql://postgres:5432/calsnap
+      DATABASE_USER: calsnap
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-calsnap-local-only}
+      VISION_MODE: ${VISION_MODE:-stub}
+      STUB_URL: http://stub:8090
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-5-nano}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      USDA_API_KEY: ${USDA_API_KEY:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      SCANS_PER_HOUR: ${SCANS_PER_HOUR:-10}
+    ports: ["127.0.0.1:8080:8080"]
+    volumes: ["photos:/app/.local/photos"]
+    depends_on:
+      postgres: {condition: service_healthy}
+      stub: {condition: service_started}
+  web:
+    build:
+      context: ./frontend
+      args: {VITE_DEMO: "true"}
+    ports: ["127.0.0.1:5173:8080"]
+    depends_on: [api]
+volumes:
+  pgdata:
+  photos:

@@ -1,0 +1,32 @@
+micronaut:
+  application:
+    name: calsnap
+  server:
+    port: ${PORT:8080}
+    max-request-size: 6MB
+    multipart:
+      max-file-size: 5MB
+      enabled: true
+  metrics:
+    enabled: true
+    export:
+      prometheus:
+        enabled: true
+datasources:
+  default:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/calsnap}
+    username: ${DATABASE_USER:calsnap}
+    password: ${DATABASE_PASSWORD:calsnap-local-only}
+    driver-class-name: org.postgresql.Driver
+    maximum-pool-size: ${DATABASE_POOL_SIZE:5}
+flyway:
+  datasources:
+    default:
+      enabled: true
+endpoints:
+  health:
+    enabled: true
+    sensitive: false
+  prometheus:
+    enabled: true
+    sensitive: false

@@ -1,0 +1,62 @@
+services:
+  - type: web
+    name: calsnap
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./render/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: PHOTO_STORAGE
+        value: database
+      - key: DATABASE_HOST
+        fromDatabase:
+          name: calsnap-db
+          property: host
+      - key: DATABASE_PORT
+        fromDatabase:
+          name: calsnap-db
+          property: port
+      - key: DATABASE_NAME
+        fromDatabase:
+          name: calsnap-db
+          property: database
+      - key: DATABASE_USER
+        fromDatabase:
+          name: calsnap-db
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: calsnap-db
+          property: password
+      - key: DATABASE_POOL_SIZE
+        value: "4"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: OPENAI_MODEL
+        value: gpt-5-nano
+      - key: VISION_MODE
+        value: live
+      - key: SCANS_PER_HOUR
+        value: "5"
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: USDA_API_KEY
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+
+databases:
+  - name: calsnap-db
+    plan: free
+    region: singapore
+    databaseName: calsnap
+    user: calsnap
+    postgresMajorVersion: "16"
+    ipAllowList: []

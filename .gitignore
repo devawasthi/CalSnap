@@ -1,0 +1,10 @@
+node_modules/
+dist/
+backend/target/
+.env
+*.log
+.local/
+playwright-report/
+test-results/
+*.tsbuildinfo
+.terraform/

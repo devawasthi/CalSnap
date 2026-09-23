@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "prettier": "^3.6.2"
+  },
+  "name": "calsnap-workspace",
+  "private": true,
+  "scripts": {
+    "format": "prettier --write frontend/src frontend/e2e docs .github",
+    "format:check": "prettier --check frontend/src frontend/e2e docs .github"
+  }
+}
