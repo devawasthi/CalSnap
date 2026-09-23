@@ -77,7 +77,8 @@ public class Recognition {
                   if (response.statusCode() == 429 || response.statusCode() >= 500)
                     throw new TransientFailure();
                   if (response.statusCode() != 200)
-                    throw new IllegalStateException("Provider rejected request");
+                    throw new IllegalStateException(
+                        "Provider rejected request with HTTP " + response.statusCode());
                   return json.readTree(response.body());
                 }));
   }

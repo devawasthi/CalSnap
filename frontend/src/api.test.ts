@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { scale, dayInZone } from "./api";
+import { scale, dayInZone, normalizeScan, type Scan } from "./api";
 describe("nutrition and calendar calculations", () => {
   it("scales all four macros for a changed portion", () => {
     expect(
@@ -10,5 +10,14 @@ describe("nutrition and calendar calculations", () => {
     expect(dayInZone("Asia/Kolkata", new Date("2026-09-20T20:00:00Z"))).toBe(
       "2026-09-21",
     );
+  });
+  it("normalizes a manual fallback response that omits empty items", () => {
+    const response = {
+      id: "scan-id",
+      imageUrl: "/photo",
+      manualEntry: true,
+      demo: false,
+    } as Scan;
+    expect(normalizeScan(response).items).toEqual([]);
   });
 });

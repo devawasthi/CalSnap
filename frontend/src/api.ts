@@ -43,6 +43,12 @@ export type Scan = {
   manualEntry: boolean;
   demo: boolean;
 };
+export function normalizeScan(scan: Scan): Scan {
+  return {
+    ...scan,
+    items: Array.isArray(scan.items) ? scan.items : [],
+  };
+}
 export type Selection = { foodName: string; portionG: number; macros: Macros };
 export type Session = {
   user: { name: string; email: string; timezone: string };

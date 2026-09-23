@@ -11,9 +11,12 @@ import java.math.*;
 import java.sql.Connection;
 import java.time.*;
 import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class FoodService {
+  static final Logger LOG = LoggerFactory.getLogger(FoodService.class);
   final Db db;
   final Photos photos;
   final Recognition recognition;
@@ -76,6 +79,10 @@ public class FoodService {
             try {
               items = recognition.recognize(c, user, image);
             } catch (Exception ex) {
+              LOG.warn(
+                  "Vision provider failed; using manual entry ({}: {})",
+                  ex.getClass().getSimpleName(),
+                  ex.getMessage());
               metrics.counter("calsnap.provider.failure", "provider", "vision").increment();
               items = List.of();
               manual = true;

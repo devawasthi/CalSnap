@@ -26,6 +26,7 @@ import {
   api,
   setCsrf,
   scale,
+  normalizeScan,
   dayInZone,
   type Entry,
   type Goal,
@@ -283,7 +284,7 @@ function App() {
       setScan(null);
       const body = new FormData();
       body.append("image", file);
-      const result = await api<Scan>("/scans", "POST", body);
+      const result = normalizeScan(await api<Scan>("/scans", "POST", body));
       setScan(result);
       const items = result.items.length
         ? result.items.map((item) => ({
