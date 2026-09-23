@@ -35,7 +35,7 @@ Use JDK **21+** (the bytecode target is 21), Maven 3.9+, Node 22+. If your machi
 
 ## Live recognition and Google login
 
-Set `VISION_MODE=live`, `OPENAI_API_KEY`, and `USDA_API_KEY`, then restart the API. **`OPENAI_MODEL=gpt-5-nano` is the default**. It supports image input and structured output; the model is configurable without changing storage or API contracts. No automatic model upgrades occur. Set OpenAI project spending limits separately. Images are normalized to 1024px and use low-detail recognition, output is capped, and users are limited to 10 scans/hour across replicas. USDA results are cached per user in PostgreSQL for 30 days. Model and nutrition provider timeouts/circuit breakers degrade to manual entry.
+Set `VISION_MODE=live`, `GEMINI_API_KEY`, and `USDA_API_KEY`, then restart the API. **`GEMINI_MODEL=gemini-3.5-flash-lite` is the default**. It supports image input and structured output; the model is configurable without changing storage or API contracts. No automatic model upgrades occur. Images are normalized to 1024px, output is capped, and users are limited to 10 scans/hour across replicas. USDA results are cached per user in PostgreSQL for 30 days. Model and nutrition provider timeouts/circuit breakers degrade to manual entry.
 
 Create a Google OAuth web client. Register `http://localhost:5173/auth/callback` for local work and `https://YOUR_ORIGIN/auth/callback` in production. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`. The backend exchanges authorization codes with PKCE, verifies Google's signature, audience, issuer, expiry, nonce and verified email, then creates a one-hour app JWT in an HttpOnly cookie. Mutation requests require a cookie-bound CSRF token. Sign in again when the session expires.
 
@@ -75,10 +75,10 @@ See [the validation record](docs/validation.md) for checks performed and the rem
 
 ## Deployment and operational limits
 
-See [deployment guide](docs/deployment.md). The Render free service has 512 MB RAM, sleeps after 15 idle minutes and can cold-start for about a minute. Free Render PostgreSQL is limited to 1 GB, expires after 30 days and has no managed backups. Export or migrate it before expiry. Live Google, OpenAI, USDA and Render checks require your credentials before launch.
+See [deployment guide](docs/deployment.md). The Render free service has 512 MB RAM, sleeps after 15 idle minutes and can cold-start for about a minute. Free Render PostgreSQL is limited to 1 GB, expires after 30 days and has no managed backups. Export or migrate it before expiry. Live Google OAuth, Gemini, USDA and Render checks require your credentials before launch.
 
 JWTs are signed with a generated deployment secret. Never enable APP_ENV=local in a deployed environment. PWA caches contain only a generic offline page, never account data or photos. Prometheus metrics are internal and JSON logs omit meal images, credentials and provider response bodies.
 
-A nano model reduces inference cost; it does not make portion estimates precise. Users always review results, and incomplete nutrition matches require manual values. Evaluate recognition on your actual foods before enabling live uploads broadly.
+A lightweight model reduces inference cost; it does not make portion estimates precise. Users always review results, and incomplete nutrition matches require manual values. Evaluate recognition on your actual foods before enabling live uploads broadly.
 
-References: [GPT-5 nano](https://developers.openai.com/api/docs/models/gpt-5-nano), [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs), [FoodData Central API](https://fdc.nal.usda.gov/api-guide), [Render free services](https://render.com/docs/free).
+References: [Gemini 3.5 Flash-Lite](https://ai.google.dev/gemini-api/docs/models/gemini-3.5-flash-lite), [Gemini structured output](https://ai.google.dev/gemini-api/docs/structured-output), [FoodData Central API](https://fdc.nal.usda.gov/api-guide), [Render free services](https://render.com/docs/free).

@@ -37,13 +37,13 @@ services:
         value: "4"
       - key: JWT_SECRET
         generateValue: true
-      - key: OPENAI_MODEL
-        value: gpt-5-nano
+      - key: GEMINI_MODEL
+        value: gemini-3.5-flash-lite
       - key: VISION_MODE
         value: live
       - key: SCANS_PER_HOUR
         value: "5"
-      - key: OPENAI_API_KEY
+      - key: GEMINI_API_KEY
         sync: false
       - key: USDA_API_KEY
         sync: false

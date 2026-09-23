@@ -178,6 +178,25 @@ class RecognitionFlowTest {
   }
 
   @Test
+  void extractsStructuredGeminiRecognition() throws Exception {
+    var recognition = new Recognition(config, json, new SimpleMeterRegistry());
+    var response =
+        json.readTree(
+            "{\"candidates\":[{\"finishReason\":\"STOP\",\"content\":{\"parts\":[{\"text\":\"{\\\"items\\\":[]}\"}]}}]}");
+    assertEquals("{\"items\":[]}", recognition.recognitionOutput(response, false));
+  }
+
+  @Test
+  void rejectsBlockedGeminiRecognition() throws Exception {
+    var recognition = new Recognition(config, json, new SimpleMeterRegistry());
+    var response =
+        json.readTree(
+            "{\"candidates\":[{\"finishReason\":\"SAFETY\",\"content\":{\"parts\":[]}}]}");
+    assertThrows(
+        IllegalStateException.class, () -> recognition.recognitionOutput(response, false));
+  }
+
+  @Test
   void photoLinksExpireAndCannotBeForged() throws Exception {
     String key = photos.put(user, jpeg);
     UUID image = UUID.fromString(key.split("/")[1].replace(".jpg", ""));

@@ -16,7 +16,7 @@ Do not commit .env files or credentials. The Blueprint asks Render to generate t
 2. Connect the CalSnap repository.
 3. Confirm that Render detects render.yaml.
 4. Review two free resources: the calsnap web service and calsnap-db PostgreSQL database, both in Singapore.
-5. Supply OPENAI_API_KEY, USDA_API_KEY, GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET when prompted. Temporary placeholders are acceptable for the first deploy if the Google OAuth client does not exist yet.
+5. Supply GEMINI_API_KEY, USDA_API_KEY, GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET when prompted. Create the Gemini key in Google AI Studio. It is separate from the Google OAuth client credentials. Temporary placeholders are acceptable for the first deploy if the Google OAuth client does not exist yet.
 6. Apply the Blueprint.
 
 The first build compiles the frontend and Java backend. Render supplies the database host, port, name, user and password directly from the managed database; they are not copied into source control.
@@ -69,7 +69,7 @@ The database stores account data and meal photos, so its 1 GB limit includes bot
 - The service spins down after 15 idle minutes and has cold starts.
 - The local filesystem is ephemeral.
 - Free PostgreSQL is 1 GB, expires after 30 days and has no Render backups.
-- GPT-5 nano calls are billed separately by OpenAI.
+- Gemini 3.5 Flash-Lite is subject to the Gemini API tier and rate limits associated with the supplied key. Google documents different data-use terms for free and paid tiers; review them before accepting uploads from other users.
 - This configuration is appropriate for a temporary personal beta, not durable production.
 
 Render documentation: [free services](https://render.com/docs/free), [Blueprints](https://render.com/docs/infrastructure-as-code), and [environment variables](https://render.com/docs/configure-environment-variables).

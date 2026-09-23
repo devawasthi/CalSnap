@@ -23,8 +23,8 @@ Local verification on 2026-09-23:
 
 Backend coverage includes atomic/idempotent scan confirmation under concurrent requests, consumed/remaining arithmetic, edit/delete recalculation, negative remaining values, effective-dated goals, cross-account isolation, hourly rate limits, nutrition caching, provider outage → manual confirmation, photo erasure (including orphan objects), signed URL forgery/expiry, JWT validation, CSRF and daylight-saving day boundaries.
 
-The browser suite covers demo sign-in, a multipart upload, multi-item review, portion correction, explicit confirmation, meal editing/deletion, goal history and unauthenticated/CSRF rejection. Browser tests use stubbed external providers; they do not incur OpenAI charges.
+The browser suite covers demo sign-in, a multipart upload, multi-item review, portion correction, explicit confirmation, meal editing/deletion, goal history and unauthenticated/CSRF rejection. Browser tests use stubbed external providers; they do not incur Gemini API usage.
 
-The exact multi-stage Render Dockerfile could not pull its public base images because the local Colima VM could not resolve `registry-1.docker.io`. Its application JAR, frontend bundle, entrypoint, Nginx configuration, migration, health proxy, and 512 MB runtime were exercised in the cached-base combined image.
+The exact Java 21 backend Dockerfile built successfully after the Gemini migration. The application JAR, frontend bundle, entrypoint, Nginx configuration, migration, health proxy, and 512 MB runtime were also exercised in the combined Render image during the initial deployment validation.
 
-Not verified with live credentials: Google sign-in, OpenAI vision quality, USDA live matching, an actual Render Blueprint deployment, the public `onrender.com` route, or a database export/restore. Those require deployment-specific credentials and settings described in deployment.md. No cloud resources were created.
+Not verified with live credentials: Google sign-in, Gemini vision quality, USDA live matching, an actual Render Blueprint deployment, the public `onrender.com` route, or a database export/restore. Those require deployment-specific credentials and settings described in deployment.md. No cloud resources were created.
