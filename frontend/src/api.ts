@@ -46,7 +46,12 @@ export type Scan = {
 export function normalizeScan(scan: Scan): Scan {
   return {
     ...scan,
-    items: Array.isArray(scan.items) ? scan.items : [],
+    items: Array.isArray(scan.items)
+      ? scan.items.map((item) => ({
+          ...item,
+          candidates: Array.isArray(item.candidates) ? item.candidates : [],
+        }))
+      : [],
   };
 }
 export type Selection = { foodName: string; portionG: number; macros: Macros };

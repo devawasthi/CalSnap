@@ -20,4 +20,25 @@ describe("nutrition and calendar calculations", () => {
     } as Scan;
     expect(normalizeScan(response).items).toEqual([]);
   });
+  it("normalizes a recognized item that omits empty nutrition candidates", () => {
+    const response = {
+      id: "scan-id",
+      imageUrl: "/photo",
+      manualEntry: false,
+      demo: false,
+      items: [
+        {
+          foodName: "mixed vegetables",
+          portionG: 180,
+          confidence: 0.84,
+        },
+      ],
+    } as Scan;
+    expect(normalizeScan(response).items[0]).toEqual({
+      foodName: "mixed vegetables",
+      portionG: 180,
+      confidence: 0.84,
+      candidates: [],
+    });
+  });
 });
